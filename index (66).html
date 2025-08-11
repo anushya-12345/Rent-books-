@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NoteRent — Rent CSE Notes & Books</title>
+  <meta name="description" content="NoteRent — Rent handwritten, readymade, and xerox notes for Computer Science & Engineering. Local pickup or delivery, seller profiles, wishlist and cart." />
+  <meta name="keywords" content="notes rental, handwritten notes, xerox copies, CSE notes, rent books, study notes" />
+  <meta name="author" content="NoteRent" />
+  <!-- OpenGraph -->
+  <meta property="og:title" content="NoteRent — Rent CSE Notes & Books" />
+  <meta property="og:description" content="Rent high-quality CSE notes from local sellers. Pickup or delivery. Wishlist, cart and seller profiles." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:;base64,=">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0b2545; --muted:#6b7280; --accent:#1565c0; --accent-2:#ff8800;
+      --success:#0a8a49; --danger:#e11d48; --radius:12px; --shadow: 0 10px 30px rgba(15,23,42,0.06);
+      --glass: rgba(255,255,255,0.6);
+    }
+    [data-theme="dark"]{
+      --bg:#071026; --card:#071428; --text:#e6eef8; --muted:#9aa6bf; --accent:#2b8cff; --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block;border-radius:8px}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:999;background:var(--card);border-bottom:1px solid rgba(0,0,0,0.04);display:flex;align-items:center;justify-content:space-between;padding:12px 18px;box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    .brand h1{font-size:18px;margin:0}
+    .slogan{font-size:12px;color:var(--muted)}
+
+    /* header actions */
+    .header-actions{display:flex;gap:10px;align-items:center}
+    .search{display:flex;align-items:center;background:var(--glass);padding:6px 10px;border-radius:10px}
+    .search input{border:none;background:transparent;outline:none;padding:6px;width:200px;color:var(--text)}
+    .icon-btn{background:transparent;border:none;padding:8px;border-radius:8px;cursor:pointer;color:var(--text)}
+    .icon-btn:hover{background:rgba(0,0,0,0.03)}
+
+    /* container */
+    .container{max-width:1150px;margin:20px auto;padding:0 14px}
+
+    /* hero */
+    .hero{display:flex;gap:18px;align-items:center;padding:24px;border-radius:var(--radius);background:linear-gradient(90deg,var(--card), #f4fbff);box-shadow:var(--shadow)}
+    .hero-left{flex:1}
+    .hero-left h2{margin:0;color:var(--accent)}
+    .hero-left p{margin:10px 0;color:var(--muted)}
+    .hero-right{width:220px}
+    .cta-row{display:flex;gap:10px;margin-top:12px}
+
+    /* grid & cards */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:18px}
+    .card{background:var(--card);padding:12px;border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(16,24,40,0.08)}
+    .meta{display:flex;justify-content:space-between;align-items:center}
+    .title{font-weight:700}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* controls */
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    select, input[type="number"]{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent}
+    .confirm{display:flex;gap:8px;align-items:center}
+    .addBtn{padding:9px 12px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;transition:transform .12s}
+    .addBtn:active{transform:scale(.98)}
+    .wishBtn{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:8px;border-radius:10px;cursor:pointer}
+
+    /* floating cart */
+    .floating-cart{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#fff;padding:12px 14px;border-radius:14px;box-shadow:0 14px 40px rgba(21,101,192,0.18);cursor:pointer;display:flex;align-items:center;gap:8px;z-index:999}
+    .floating-cart .count{background:#fff;color:var(--accent);padding:4px 8px;border-radius:999px;font-weight:800}
+
+    /* offcanvas */
+    .offcanvas{position:fixed;right:0;top:0;height:100vh;width:380px;background:var(--card);box-shadow:-20px 0 40px rgba(0,0,0,0.12);transform:translateX(110%);transition:transform .28s;border-left:1px solid rgba(0,0,0,0.04);z-index:1000;display:flex;flex-direction:column}
+    .offcanvas.open{transform:translateX(0)}
+    .offcanvas .body{padding:12px;overflow:auto;flex:1}
+    .cart-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(0,0,0,0.06)}
+    .cart-thumb{width:74px;height:56px;object-fit:cover;border-radius:8px}
+    .cart-actions{display:flex;gap:6px;align-items:center}
+
+    /* login modal */
+    .backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.5);display:none;align-items:center;justify-content:center;z-index:1100}
+    .modal{background:var(--card);padding:18px;border-radius:12px;box-shadow:var(--shadow);width:420px;max-width:94%}
+    .modal.open{display:flex}
+
+    /* badges & small */
+    .verified{color:var(--success);font-weight:800;margin-left:8px}
+    .badge{background:rgba(10,138,73,0.08);color:var(--success);padding:6px 8px;border-radius:8px;font-weight:700;font-size:13px}
+
+    /* blog & testimonials */
+    .card-plain{background:transparent;padding:0}
+    .blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+
+    footer{margin:28px auto 60px;max-width:1150px;padding:12px;color:var(--muted);text-align:center}
+    @media (max-width:860px){
+      .search input{width:110px}
+      .offcanvas{width:100%}
+      .hero{flex-direction:column}
+      .hero-right{width:100%}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="logo"><i class="fa-solid fa-book-open-reader" style="font-size:18px"></i></div>
+      <div>
+        <h1 style="margin:0;font-size:16px">NoteRent</h1>
+        <div class="slogan">EduRent — Your Notes, Your Way</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="search">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--muted);margin-right:8px"></i>
+        <input id="searchInput" placeholder="Search subject, seller or type..." />
+      </div>
+
+      <select id="filterType" style="padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
+        <option value="all">All types</option>
+        <option value="handwritten">Handwritten</option>
+        <option value="readymade">Readymade</option>
+        <option value="xerox">Xerox</option>
+      </select>
+
+      <button class="icon-btn" id="loginBtn" title="Login / Signup"><i class="fa-solid fa-user"></i></button>
+      <button class="icon-btn" id="darkToggle" title="Dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-left">
+        <h2>Rent CSE Notes — fast, local & affordable</h2>
+        <p class="small">Choose pickup or delivery, pick days, save favorites — everything designed for students.</p>
+        <div class="cta-row">
+          <a class="addBtn" href="#browse" onclick="document.getElementById('searchInput').focus()">Browse Notes</a>
+          <button class="wishBtn" onclick="openWishlist()">Wishlist</button>
+        </div>
+      </div>
+      <div class="hero-right">
+        <img src="https://via.placeholder.com/320x160?text=Notes+Preview" loading="lazy" alt="notes preview" style="border-radius:10px">
+        <div class="small" style="margin-top:10px">Pickup addresses & maps available for each seller</div>
+      </div>
+    </section>
+
+    <!-- Browse -->
+    <section id="browse" style="margin-top:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 style="margin:0">Available Notes & Books (CSE)</h3>
+          <div class="small">Handwritten, Readymade and Xerox listings — verified sellers marked below.</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="small">Sort</div>
+          <select id="sortBy" style="padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
+            <option value="popular">Popular</option>
+            <option value="price_asc">Price low → high</option>
+            <option value="price_desc">Price high → low</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid" id="productGrid"></div>
+    </section>
+
+    <!-- Sellers -->
+    <section id="sellers" style="margin-top:20px">
+      <h3>Our Sellers</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-top:12px">
+        <!-- Seller cards (static demo) -->
+        <div class="card seller-card">
+          <img src="https://via.placeholder.com/120x120?text=Anushya" alt="Anushya">
+          <div class="seller-meta">
+            <div style="display:flex;gap:8px;align-items:center"><strong>Anushya S</strong><span class="verified">✔ Verified</span></div>
+            <div class="small">Multiple addresses: 12, Main Street, Erode • 89, College Lane, Erode</div>
+            <div class="small">Contact: 1234567890 • <a href="mailto:anushyas086@gmail.com">anushyas086@gmail.com</a></div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="small-btn" onclick="openMap('12, Main Street, Erode')"><i class="fa-solid fa-map-pin"></i> Map</button>
+              <button class="small-btn" onclick="openChat('Anushya S')"><i class="fa-solid fa-comments"></i> Chat</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card seller-card">
+          <img src="https://via.placeholder.com/120x120?text=Madhumitha" alt="Madhumitha">
+          <div class="seller-meta">
+            <div style="display:flex;gap:8px;align-items:center"><strong>Madhumitha A</strong><span class="verified">✔ Verified</span></div>
+            <div class="small">Address: 45, College Road, Perundurai</div>
+            <div class="small">Contact: 9876543210 • <a href="mailto:madh@example.com">madh@example.com</a></div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="small-btn" onclick="openMap('45, College Road, Perundurai')"><i class="fa-solid fa-map-pin"></i> Map</button>
+              <button class="small-btn" onclick="openChat('Madhumitha A')"><i class="fa-solid fa-comments"></i> Chat</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog & Testimonials -->
+    <section id="content" style="margin-top:20px">
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px">
+        <div class="card card-plain">
+          <h3>Study Tips & Blog</h3>
+          <div class="blog-grid">
+            <div class="card">
+              <img src="https://via.placeholder.com/640x360?text=Study+Tips" loading="lazy" alt="blog1">
+              <div style="padding:8px 0"><strong>How to read notes effectively</strong><div class="small">Quick methods to use rented notes.</div></div>
+            </div>
+            <div class="card">
+              <img src="https://via.placeholder.com/640x360?text=Exam+Prep" loading="lazy" alt="blog2">
+              <div style="padding:8px 0"><strong>Top 5 subjects to prioritise</strong><div class="small">Plan your semester study schedule.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3>Testimonials</h3>
+          <div class="card">
+            <div style="font-weight:700">"Saved me hours of rewriting!"</div>
+            <div class="small">— Priya, 3rd year CSE</div>
+          </div>
+          <div class="card" style="margin-top:10px">
+            <div style="font-weight:700">"Quick pickup and clean notes."</div>
+            <div class="small">— Rahul, 2nd year ECE</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 NoteRent • Contact: <a href="mailto:anushyas086@gmail.com">anushyas086@gmail.com</a> • Phone: 1234567890
+    </footer>
+  </main>
+
+  <!-- Floating cart -->
+  <div class="floating-cart" id="floatingCart" title="Open cart" onclick="toggleCart()">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <div style="font-weight:800">Cart</div>
+    <div class="count" id="cartCount">0</div>
+  </div>
+
+  <!-- Offcanvas Cart -->
+  <div class="offcanvas" id="cartCanvas" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px">
+      <div style="font-weight:800">Your Cart</div>
+      <div>
+        <button class="small-btn" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="body" id="cartBody"></div>
+
+    <div style="padding:12px;border-top:1px solid rgba(0,0,0,0.04)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Total</div>
+        <div id="grandTotal">₹0</div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="addBtn" onclick="startPayment()">Pay & Rent</button>
+        <button class="wishBtn" onclick="clearCart()" style="background:#ff6b6b;color:#fff;border:none">Clear</button>
+      </div>
+      <div class="small" style="margin-top:10px;color:var(--muted)">Payment integration: placeholder — integrate Razorpay/Stripe server-side for real payments.</div>
+    </div>
+  </div>
+
+  <!-- Login / Signup Modal -->
+  <div class="backdrop" id="loginBackdrop">
+    <div class="modal" id="loginModal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:800" id="loginTitle">Login</div>
+        <button class="icon-btn" onclick="closeLogin()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div id="loginBox">
+        <label class="small">Email</label>
+        <input id="loginEmail" type="email" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+        <label class="small" style="margin-top:8px">Password</label>
+        <input id="loginPass" type="password" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="addBtn" onclick="doLogin()">Login</button>
+          <button class="wishBtn" onclick="showSignup()">Signup</button>
+        </div>
+        <div class="small muted" style="margin-top:12px">This demo stores accounts in localStorage (only for prototype).</div>
+      </div>
+
+      <div id="signupBox" style="display:none">
+        <label class="small">Full name</label>
+        <input id="signupName" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+        <label class="small" style="margin-top:8px">Email</label>
+        <input id="signupEmail" type="email" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+        <label class="small" style="margin-top:8px">Password</label>
+        <input id="signupPass" type="password" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" />
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="addBtn" onclick="doSignup()">Create account</button>
+          <button class="wishBtn" onclick="showLogin()">Back to login</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map Modal -->
+  <div class="backdrop" id="mapBackdrop" onclick="closeMap()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800" id="mapTitle">Location</div>
+        <button class="icon-btn" onclick="closeMap()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="margin-top:8px"><iframe id="mapFrame" style="width:100%;height:420px;border:none;border-radius:8px"></iframe></div>
+    </div>
+  </div>
+
+  <!-- Chat Modal (demo) -->
+  <div class="backdrop" id="chatBackdrop" onclick="closeChat()">
+    <div class="modal" onclick="event.stopPropagation()" style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800" id="chatTitle">Chat</div>
+        <button class="icon-btn" onclick="closeChat()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="chatBody" style="height:320px;overflow:auto;padding:8px;border-radius:8px;background:var(--glass)"></div>
+      <div style="display:flex;gap:8px">
+        <input id="chatInput" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)" placeholder="Type message..." />
+        <button class="addBtn" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ====================
+   Phase-1 Frontend App
+   Uses localStorage for demo persistence (cart, users, wishlist, chat)
+   ==================== */
+
+/* Sample product dataset (CSE subjects) */
+const PRODUCTS = [
+  { id:1, title:"Data Structures — Handwritten", type:"handwritten", seller:"Anushya S", addresses:["12, Main Street, Erode","89, College Lane, Erode"], price:50, img:"https://via.placeholder.com/640x400?text=Data+Structures" },
+  { id:2, title:"DBMS — Handwritten", type:"handwritten", seller:"Anushya S", addresses:["12, Main Street, Erode"], price:55, img:"https://via.placeholder.com/640x400?text=DBMS" },
+  { id:3, title:"Computer Networks — Xerox", type:"xerox", seller:"Anushya S", addresses:["12, Main Street, Erode"], price:30, img:"https://via.placeholder.com/640x400?text=Computer+Networks" },
+  { id:4, title:"Operating Systems — Readymade", type:"readymade", seller:"Madhumitha A", addresses:["45, College Road, Perundurai"], price:60, img:"https://via.placeholder.com/640x400?text=Operating+Systems" },
+  { id:5, title:"Artificial Intelligence — Readymade", type:"readymade", seller:"Madhumitha A", addresses:["45, College Road, Perundurai"], price:80, img:"https://via.placeholder.com/640x400?text=AI" },
+  { id:6, title:"Software Engineering — Xerox", type:"xerox", seller:"Madhumitha A", addresses:["45, College Road, Perundurai"], price:40, img:"https://via.placeholder.com/640x400?text=Software+Engineering" }
+];
+
+/* Local storage keys */
+const KEY_CART = 'noterent_cart_v1';
+const KEY_WISHLIST = 'noterent_wishlist_v1';
+const KEY_USERS = 'noterent_users_v1';
+const KEY_CURRENT_USER = 'noterent_current_user_v1';
+const KEY_CHAT_PREFIX = 'noterent_chat_';
+
+/* App state */
+let CART = JSON.parse(localStorage.getItem(KEY_CART) || '[]');
+let WISHLIST = JSON.parse(localStorage.getItem(KEY_WISHLIST) || '[]');
+let USERS = JSON.parse(localStorage.getItem(KEY_USERS) || '[]');
+let CURRENT_USER = JSON.parse(localStorage.getItem(KEY_CURRENT_USER) || 'null');
+
+/* DOM refs */
+const productGrid = document.getElementById('productGrid');
+const cartCount = document.getElementById('cartCount');
+const cartCanvas = document.getElementById('cartCanvas');
+const cartBody = document.getElementById('cartBody');
+const grandTotalEl = document.getElementById('grandTotal');
+const searchInput = document.getElementById('searchInput');
+const filterType = document.getElementById('filterType');
+const sortBy = document.getElementById('sortBy');
+const loginBackdrop = document.getElementById('loginBackdrop');
+const loginModal = document.getElementById('loginModal');
+const loginBox = document.getElementById('loginBox');
+const signupBox = document.getElementById('signupBox');
+const loginTitle = document.getElementById('loginTitle');
+
+/* Dark mode toggle */
+const darkToggle = document.getElementById('darkToggle');
+(function initTheme(){
+  const theme = localStorage.getItem('noterent_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  if(theme === 'dark') document.documentElement.setAttribute('data-theme','dark');
+})();
+darkToggle.addEventListener('click', ()=>{
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if(isDark) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('noterent_theme','light'); }
+  else { document.documentElement.setAttribute('data-theme','dark'); localStorage.setItem('noterent_theme','dark'); }
+});
+
+/* Render products */
+function renderProducts(){
+  const q = (searchInput.value || '').trim().toLowerCase();
+  const type = filterType.value;
+  const sort = sortBy.value;
+  let list = PRODUCTS.slice();
+
+  if(type !== 'all') list = list.filter(p => p.type === type);
+  if(q) list = list.filter(p => p.title.toLowerCase().includes(q) || p.seller.toLowerCase().includes(q));
+  if(sort === 'price_asc') list.sort((a,b)=>a.price - b.price);
+  if(sort === 'price_desc') list.sort((a,b)=>b.price - a.price);
+
+  productGrid.innerHTML = '';
+  list.forEach(p=>{
+    const card = document.createElement('div'); card.className = 'card';
+    const wishActive = WISHLIST.includes(p.id);
+    card.innerHTML = `
+      <img loading="lazy" src="${p.img}" alt="${escape(p.title)}">
+      <div class="meta">
+        <div class="title">${escape(p.title)}</div>
+        <div class="small badge">${p.type.toUpperCase()}</div>
+      </div>
+      <div class="small">Seller: <strong>${escape(p.seller)}</strong><span class="verified" style="margin-left:8px">✔</span></div>
+      <div class="small">Price: <span class="price">₹${p.price}/day</span></div>
+
+      <div class="controls">
+        <label class="small">Days:
+          <select id="days-${p.id}">${Array.from({length:30},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}</select>
+        </label>
+
+        <label class="small">Option:
+          <select id="mode-${p.id}">
+            <option value="pickup">Pickup</option>
+            <option value="delivery">Delivery</option>
+          </select>
+        </label>
+
+        <div style="font-size:13px;color:var(--muted)">Total: <span id="calc-${p.id}">₹${p.price}</span></div>
+
+        <button class="wishBtn" id="wish-${p.id}" title="Wishlist" style="margin-left:auto">
+          <i class="${wishActive ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+        </button>
+
+        <button class="addBtn" id="add-${p.id}" disabled>Add to cart</button>
+
+        <button class="small-btn" onclick="openMap('${encodeURIComponent(p.addresses[0])}', '${escape(p.seller)}')"><i class="fa-solid fa-map-pin"></i></button>
+      </div>
+
+      <div class="small" style="margin-top:6px">Addresses: ${p.addresses.map(a=>escape(a)).join(' • ')}</div>
+    `;
+    productGrid.appendChild(card);
+
+    // events
+    const daysSel = card.querySelector(`#days-${p.id}`);
+    const modeSel = card.querySelector(`#mode-${p.id}`);
+    const calcEl = card.querySelector(`#calc-${p.id}`);
+    const confirmCheckbox = createPickupConfirm(card, p); // creates a small pickup checkbox UI
+    const addBtn = card.querySelector(`#add-${p.id}`);
+    const wishBtn = card.querySelector(`#wish-${p.id}`);
+
+    daysSel.addEventListener('change', ()=> calcEl.textContent = '₹' + (p.price * parseInt(daysSel.value)));
+    modeSel.addEventListener('change', ()=> {
+      // if pickup mode selected, require user to acknowledge pickup (confirm element)
+      if(modeSel.value === 'pickup'){ confirmCheckbox.style.display = 'flex'; addBtn.disabled = true; }
+      else { confirmCheckbox.style.display = 'none'; addBtn.disabled = false; }
+    });
+    addBtn.addEventListener('click', ()=> {
+      const days = parseInt(daysSel.value);
+      const mode = modeSel.value;
+      addToCart(p.id, days, mode);
+      // small pulse animation
+      addBtn.animate([{transform:'scale(1)'},{transform:'scale(.96)'},{transform:'scale(1)'}],{duration:220});
+    });
+
+    // wishlist toggle
+    wishBtn.onclick = ()=> {
+      toggleWishlist(p.id);
+      wishBtn.querySelector('i').className = WISHLIST.includes(p.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+    };
+
+    // initial state
+    modeSel.dispatchEvent(new Event('change'));
+    calcEl.textContent = '₹' + p.price;
+  });
+}
+
+/* Creates pickup confirmation UI (returns the element) */
+function createPickupConfirm(card, product){
+  const wrapper = document.createElement('div'); wrapper.className='confirm small'; wrapper.style.display='none';
+  wrapper.innerHTML = `<input type="checkbox" id="confirm-${product.id}" /><label for="confirm-${product.id}">I'll pick up from seller address</label>`;
+  card.querySelector('.controls').insertBefore(wrapper, card.querySelector('.addBtn'));
+  const addBtn = card.querySelector(`#add-${product.id}`);
+  const chk = wrapper.querySelector(`#confirm-${product.id}`);
+  chk.addEventListener('change', ()=> addBtn.disabled = !chk.checked);
+  return wrapper;
+}
+
+/* Cart logic */
+function addToCart(productId, days, mode){
+  const prod = PRODUCTS.find(p=>p.id===productId);
+  const item = {
+    cartId: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    productId: prod.id,
+    title: prod.title,
+    seller: prod.seller,
+    days: days,
+    mode: mode,
+    pricePerDay: prod.price,
+    totalPrice: prod.price * days,
+    img: prod.img,
+  };
+  CART.push(item);
+  saveCart(); renderCart(); showToast(`${prod.title} added (${days} day${days>1?'s':''})`);
+}
+
+function saveCart(){ localStorage.setItem(KEY_CART, JSON.stringify(CART)); }
+function saveWishlist(){ localStorage.setItem(KEY_WISHLIST, JSON.stringify(WISHLIST)); }
+function saveUsers(){ localStorage.setItem(KEY_USERS, JSON.stringify(USERS)); }
+function saveCurrentUser(){ localStorage.setItem(KEY_CURRENT_USER, JSON.stringify(CURRENT_USER)); }
+
+/* Render cart offcanvas */
+function renderCart(){
+  cartBody.innerHTML = '';
+  if(CART.length === 0){
+    cartBody.innerHTML = `<div class="small muted" style="padding:12px">Your cart is empty.</div>`;
+    document.getElementById('grandTotal').textContent = '₹0';
+    document.getElementById('cartCount').textContent = '0';
+    return;
+  }
+  let grand = 0;
+  CART.forEach(item=>{
+    grand += item.totalPrice;
+    const row = document.createElement('div'); row.className = 'cart-item';
+    row.innerHTML = `
+      <img class="cart-thumb" src="${item.img}" alt="${escape(item.title)}" />
+      <div style="flex:1">
+        <div style="font-weight:700">${escape(item.title)}</div>
+        <div class="small">Seller: ${escape(item.seller)}</div>
+        <div class="small">₹${item.pricePerDay}/day • Total: ₹${item.totalPrice}</div>
+      </div>
+      <div class="cart-actions">
+        <label class="small">Days:
+          <select data-id="${item.cartId}" class="cart-days">${Array.from({length:30},(_,i)=>`<option ${i+1===item.days ? 'selected' : ''} value="${i+1}">${i+1}</option>`).join('')}</select>
+        </label>
+        <button class="small-btn" data-remove="${item.cartId}" title="Remove"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `;
+    cartBody.appendChild(row);
+  });
+
+  document.getElementById('grandTotal').textContent = '₹' + grand;
+  document.getElementById('cartCount').textContent = CART.length;
+
+  // attach events
+  cartBody.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.onclick = ()=> {
+      const id = btn.getAttribute('data-remove');
+      CART = CART.filter(c=>c.cartId !== id); saveCart(); renderCart();
+    };
+  });
+  cartBody.querySelectorAll('.cart-days').forEach(sel=>{
+    sel.onchange = ()=>{
+      const id = sel.dataset.id;
+      const days = parseInt(sel.value);
+      const idx = CART.findIndex(i=>i.cartId === id);
+      if(idx > -1){ CART[idx].days = days; CART[idx].totalPrice = CART[idx].pricePerDay * days; saveCart(); renderCart(); }
+    };
+  });
+}
+
+/* Floating cart toggle */
+function toggleCart(){
+  const canvas = document.getElementById('cartCanvas');
+  canvas.classList.toggle('open');
+  document.getElementById('cartCanvas').setAttribute('aria-hidden', canvas.classList.contains('open') ? 'false' : 'true');
+  if(canvas.classList.contains('open')) renderCart();
+}
+
+/* Checkout (demo) */
+function startPayment(){
+  if(CART.length === 0){ alert('Cart is empty'); return; }
+  // Placeholder: integrate Razorpay/Stripe server-side here.
+  const total = CART.reduce((s,i)=>s+i.totalPrice,0);
+  if(confirm(`Proceed to payment of ₹${total}? (Demo)\n\nClick OK to simulate payment and place order.)`)){
+    // Simulate order placed: clear cart and show success
+    CART = []; saveCart(); renderCart(); toggleCart(); alert('Payment successful (demo). Order placed. Seller will contact you.');
+  }
+}
+
+/* Wishlist */
+function toggleWishlist(productId){
+  const idx = WISHLIST.indexOf(productId);
+  if(idx === -1) WISHLIST.push(productId);
+  else WISHLIST.splice(idx,1);
+  saveWishlist();
+  showToast(idx === -1 ? 'Added to wishlist' : 'Removed from wishlist');
+}
+
+function openWishlist(){
+  const items = WISHLIST.map(id => PRODUCTS.find(p=>p.id===id)).filter(Boolean);
+  if(items.length === 0) return alert('Your wishlist is empty');
+  alert('Wishlist:\n\n' + items.map(i=>i.title).join('\n'));
+}
+
+/* Login / Signup (demo using localStorage) */
+document.getElementById('loginBtn').addEventListener('click', openLogin);
+function openLogin(){ loginBackdrop.style.display='flex'; showLogin(); }
+function closeLogin(){ loginBackdrop.style.display='none'; }
+function showSignup(){ loginTitle.textContent='Signup'; loginBox.style.display='none'; signupBox.style.display='block'; }
+function showLogin(){ loginTitle.textContent='Login'; loginBox.style.display='block'; signupBox.style.display='none'; }
+
+function doSignup(){
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('signupPass').value;
+  if(!name || !email || !pass) return alert('Please fill all fields');
+  if(USERS.find(u=>u.email===email)) return alert('Email already registered');
+  USERS.push({id:Date.now().toString(36),name,email,pass,role:'buyer'}); saveUsers();
+  CURRENT_USER = {name,email}; saveCurrentUser();
+  showToast('Account created — logged in');
+  closeLogin();
+}
+
+function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPass').value;
+  const user = USERS.find(u=>u.email===email && u.pass===pass);
+  if(!user) return alert('Invalid credentials (demo)');
+  CURRENT_USER = {name:user.name,email:user.email}; saveCurrentUser();
+  showToast('Logged in as ' + user.name);
+  closeLogin();
+}
+
+/* Map modal */
+function openMap(address, title='Location'){
+  document.getElementById('mapTitle').textContent = title;
+  const frame = document.getElementById('mapFrame');
+  frame.src = `https://www.google.com/maps?q=${address}&output=embed`;
+  document.getElementById('mapBackdrop').style.display = 'flex';
+}
+function closeMap(){ document.getElementById('mapBackdrop').style.display = 'none'; document.getElementById('mapFrame').src=''; }
+
+/* Chat (demo via localStorage) */
+let ACTIVE_CHAT_SELLER = null;
+function openChat(seller){
+  ACTIVE_CHAT_SELLER = seller;
+  document.getElementById('chatTitle').textContent = 'Chat — ' + seller;
+  document.getElementById('chatBackdrop').style.display = 'flex';
+  renderChat();
+}
+function closeChat(){ document.getElementById('chatBackdrop').style.display = 'none'; ACTIVE_CHAT_SELLER = null; }
+function chatKey(){ return KEY_CHAT_PREFIX + (ACTIVE_CHAT_SELLER || 'unknown'); }
+function renderChat(){
+  const body = document.getElementById('chatBody'); body.innerHTML = '';
+  const msgs = JSON.parse(localStorage.getItem(chatKey()) || '[]');
+  msgs.forEach(m=>{
+    const div = document.createElement('div'); div.style.marginBottom='8px';
+    div.innerHTML = `<div style="font-size:13px;color:var(--muted)">${escape(m.from)} • <span style="font-size:12px;color:var(--muted)">${new Date(m.at).toLocaleString()}</span></div><div style="background:var(--card);padding:8px;border-radius:8px;margin-top:4px">${escape(m.text)}</div>`;
+    body.appendChild(div);
+  });
+  body.scrollTop = body.scrollHeight;
+}
+function sendChat(){
+  const txt = document.getElementById('chatInput').value.trim();
+  if(!txt) return;
+  const msgs = JSON.parse(localStorage.getItem(chatKey()) || '[]');
+  const from = CURRENT_USER ? CURRENT_USER.name : 'Guest';
+  msgs.push({from, text:txt, at:Date.now()});
+  localStorage.setItem(chatKey(), JSON.stringify(msgs));
+  document.getElementById('chatInput').value = '';
+  renderChat();
+}
+
+/* Small UI helpers */
+function showToast(msg){
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.position = 'fixed'; t.style.right='18px'; t.style.bottom='110px'; t.style.background='var(--accent)';
+  t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='10px'; t.style.zIndex=1200; t.style.boxShadow='0 12px 30px rgba(21,101,192,0.12)';
+  document.body.appendChild(t);
+  setTimeout(()=> t.style.opacity='0',1800);
+  setTimeout(()=> t.remove(),2200);
+}
+function escape(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Bind events */
+searchInput.addEventListener('input', renderProducts);
+filterType.addEventListener('change', renderProducts);
+sortBy.addEventListener('change', renderProducts);
+document.getElementById('loginBackdrop').addEventListener('click', (e)=>{ if(e.target === e.currentTarget) closeLogin(); });
+
+/* Load wishlist & users from storage */
+(function init(){
+  WISHLIST = JSON.parse(localStorage.getItem(KEY_WISHLIST) || '[]');
+  USERS = JSON.parse(localStorage.getItem(KEY_USERS) || '[]');
+  CURRENT_USER = JSON.parse(localStorage.getItem(KEY_CURRENT_USER) || 'null');
+  renderProducts(); renderCart();
+})();
+
+/* clear cart (demo) */
+function clearCart(){ if(confirm('Clear cart?')) { CART=[]; saveCart(); renderCart(); } }
+
+/* deep-Link / anchor behavior: hash scroll */
+if(location.hash){ const el = document.querySelector(location.hash); if(el) el.scrollIntoView({behavior:'smooth'}); }
+window.addEventListener('hashchange', ()=> { const el = document.querySelector(location.hash); if(el) el.scrollIntoView({behavior:'smooth'}); });
+
+</script>
+</body>
+</html>
